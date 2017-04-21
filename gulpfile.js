@@ -21,12 +21,12 @@ gulp.task('serve', ['lint', 'build'], function(cb) {
       cb(code);
       console.log('Error detected, waiting for changes...');
     }
-    cb();
   });
+    cb();
 })
 
 gulp.task('watch', function() {
-  gulp.watch(watchedPaths, ['build']);
+  gulp.watch(watchedPaths, ['build', 'serve']);
 })
 
 gulp.task('lint', function(cb) {

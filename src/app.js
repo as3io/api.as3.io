@@ -19,4 +19,7 @@ app.use('/api', Router);
 routes(Router);
 
 app.listen(port);
+
+process.stdout.write('Listening on port ' + port);
+
 export default app;
