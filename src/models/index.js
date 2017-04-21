@@ -1,15 +1,4 @@
-import fs from 'fs';
-import path from 'path';
+import taxonomy from './taxonomy';
+import term from './term';
 
-const dir = path.join(__dirname);
-
-fs.readdir(dir, (err, files) => {
-  files.forEach(file => {
-    if ('.js' === path.extname(file)) {
-      const modelName = path.basename(file, '.js');
-      if ('index' !== modelName) {
-        exports[modelName] = require(path.join(dir, file)).default;
-      }
-    }
-  });
-});
+export { taxonomy, term };
