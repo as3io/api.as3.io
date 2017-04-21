@@ -61,28 +61,3 @@ gulp.task('default', ['watch', 'serve']);
 process.on('exit', function() {
     if (node) node.kill()
 })
-
-
-// gulp.task('default', ['watch', 'serve'], function() {
-
-// });
-
-// gulp.task('build', function() {
-//   // place code for your default task here
-//   gulp
-//     .src('src/**/*.js')
-//     .pipe(babel({
-//       presets: ['es2015']
-//     }))
-//     .pipe(gulp.dest('dist'))
-//   ;
-// });
-
-// gulp.task('serve', function() {
-//   console.warn('Serving!');
-// })
-
-// gulp.task('watch', function() {
-//   gulp.watch('src/**/*', ['build']);
-// })
-
