@@ -2,54 +2,60 @@ var
   gulp = require('gulp'),
   babel = require('gulp-babel'),
   spawn = require('child_process').spawn,
+  del = require('del'),
   node,
   watchedPaths = [
     'src/**/*.js'
   ]
 ;
 
-gulp.task('serve', function() {
+gulp.task('serve', ['lint', 'build'], function(cb) {
   if (node) {
     node.kill();
   }
 
-  node = spawn('node', ['dist/app.js']);
-
-  node.stdout.pipe(process.stdout);
-  node.stderr.pipe(process.stderr);
+  node = spawn('node', ['dist/app.js'], {stdio: 'inherit'});
 
   node.on('close', function (code) {
     if (code === 8) {
-      gulp.log('Error detected, waiting for changes...');
+      cb(code);
+      console.log('Error detected, waiting for changes...');
     }
+    cb();
   });
 })
 
 gulp.task('watch', function() {
-  gulp.watch(watchedPaths, ['lint', 'build', 'serve']);
+  gulp.watch(watchedPaths, ['build']);
 })
 
-gulp.task('lint', function() {
-  lint = spawn('./node_modules/.bin/eslint', watchedPaths);
-  lint.stdout.pipe(process.stdout);
-  lint.stderr.pipe(process.stderr);
+gulp.task('lint', function(cb) {
+  lint = spawn('./node_modules/.bin/eslint', watchedPaths, {stdio: 'inherit'});
   lint.on('close', function (code) {
     if (code === 8) {
+      cb(code);
       gulp.log('Error detected, waiting for changes...');
     }
+    cb();
   });
 })
 
-gulp.task('build', function() {
-  console.log('Building JS');
+gulp.task('clean', function(cb) {
+  del(['dist/**', '!dist', '!dist/.gitignore']).then(function(paths) {
+    cb();
+  });
+})
+
+gulp.task('build', ['clean'], function(cb) {
   gulp
     .src(watchedPaths)
     .pipe(babel())
     .pipe(gulp.dest('dist'))
+    .on('end', cb)
   ;
 })
 
-gulp.task('default', ['lint', 'build', 'watch', 'serve']);
+gulp.task('default', ['watch', 'serve']);
 
 // clean up if an error goes unhandled.
 process.on('exit', function() {
