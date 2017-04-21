@@ -1,25 +1,37 @@
-import Express from 'express';
-import BodyParser from 'body-parser';
-import Mongoose from 'mongoose';
-import routes from './app/routes';
+import express from 'express';
+import bodyParser from 'body-parser';
+import mongoose from 'mongoose';
+import * as models from './models';
+import routes from './routes';
 
+const version = '1.0';
 
-const app  = Express();
+const app = express();
 const port = process.env.PORT || 3000;
 
-Mongoose.connect('mongodb://localhost/node-api');
+mongoose.connect('mongodb://localhost/node-api');
+mongoose.Promise = global.Promise;
 
-app.use(BodyParser.urlencoded({ extended: true }));
-app.use(BodyParser.json());
+// Eventually will need for handling different connections.
+// const db = mongoose.createConnection('mongodb://localhost/node-api');
+// const Modal = db.model('taxonomy');
 
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
-//Routes API
-const Router = Express.Router();
-app.use('/api', Router);
+/*
+- TO DOs:
+- Config files for different connections and evironments, etc.
+- Global JSON response error handling
+- Determine model folder structure
+- Write JS file to import all models via Gulp
+*/
+const Router = express.Router();
 routes(Router);
+app.use(`/api/${version}`, Router);
 
 app.listen(port);
 
-process.stdout.write('Listening on port ' + port);
+process.stdout.write(`Listening on port ${port}`);
 
 export default app;
